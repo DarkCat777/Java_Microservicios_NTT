@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="SonarLintProjectSettings">
+    <option name="moduleMapping">
+      <map>
+        <entry key="bank-products-service" value="products-service" />
+        <entry key="credits-service" value="credits_service" />
+        <entry key="customers-service" value="clients-service" />
+        <entry key="discovery-server" value="discovery-service" />
+        <entry key="transactions-service" value="transaction-service" />
+      </map>
+    </option>
+  </component>
+</project>
