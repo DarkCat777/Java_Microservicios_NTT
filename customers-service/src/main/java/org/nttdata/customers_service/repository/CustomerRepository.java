@@ -1,9 +1,8 @@
 package org.nttdata.customers_service.repository;
 
 import org.nttdata.customers_service.domain.entity.Customer;
-import org.springframework.data.mongodb.repository.ReactiveMongoRepository;
+import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
-import reactor.core.publisher.Flux;
 
 import java.util.Set;
 
@@ -11,12 +10,13 @@ import java.util.Set;
  * Repositorio de la entidad Cliente
  */
 @Repository
-public interface CustomerRepository extends ReactiveMongoRepository<Customer, String> {
+public interface CustomerRepository extends JpaRepository<Customer, Long> {
+
     /**
-     * Obtiene todos los clientes que tengan los ids de la colección.
+     * Verifica si todas las entidades con los identificadores especificados están presentes en la base de datos.
      *
-     * @param ids Ids de los que se busca las entidades Cliente
-     * @return instancia reactiva de multiples elementos Cliente
+     * @param ids Conjunto de identificadores de las entidades a verificar
+     * @return true si todas las entidades con los identificadores especificados existen en la base de datos, false de lo contrario
      */
-    Flux<Customer> findAllByIdIn(Set<String> ids);
+    Boolean existsAllByIdIn(Set<Long> ids);
 }

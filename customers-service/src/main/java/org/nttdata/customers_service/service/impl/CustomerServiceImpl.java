@@ -1,15 +1,18 @@
 package org.nttdata.customers_service.service.impl;
 
 import lombok.RequiredArgsConstructor;
+import org.nttdata.customers_service.domain.entity.Customer;
 import org.nttdata.customers_service.domain.exception.NotFoundException;
 import org.nttdata.customers_service.domain.dto.CustomerDto;
 import org.nttdata.customers_service.mapper.ICustomerMapper;
 import org.nttdata.customers_service.repository.CustomerRepository;
 import org.nttdata.customers_service.service.ICustomerService;
 import org.springframework.stereotype.Service;
-import reactor.core.publisher.Flux;
-import reactor.core.publisher.Mono;
-import reactor.core.scheduler.Schedulers;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import static org.nttdata.customers_service.domain.exception.NotFoundException.CUSTOMER_NOT_FOUND_TEMPLATE;
 
@@ -28,48 +31,48 @@ public class CustomerServiceImpl implements ICustomerService {
     private final ICustomerMapper customerMapper;
 
     @Override
-    public Mono<CustomerDto> createCustomer(CustomerDto newCustomer) {
-        return customerRepository.save(customerMapper.toEntity(newCustomer)).publishOn(Schedulers.boundedElastic()).map(customerMapper::toDto);
+    @Transactional
+    public CustomerDto createCustomer(CustomerDto newCustomer) {
+        return customerMapper.toDto(customerRepository.save(customerMapper.toEntity(newCustomer)));
     }
 
     @Override
-    public Mono<CustomerDto> updateCustomer(String customerId, CustomerDto newCustomer) {
-        if (newCustomer.getId() == null) {
-            return Mono.error(new IllegalArgumentException("Id es nulo."));
+    @Transactional
+    public CustomerDto updateCustomer(Long customerId, CustomerDto newCustomer) {
+        Customer customer = customerRepository.findById(customerId).orElseThrow(() -> new NotFoundException(String.format(CUSTOMER_NOT_FOUND_TEMPLATE, customerId)));
+        if (newCustomer.getCustomerType().equals(customer.getCustomerType().toString())) {
+            return customerMapper.toDto(customerRepository.save(customerMapper.partialUpdate(newCustomer, customer)));
         } else {
-            return customerRepository.findById(customerId)
-                    .switchIfEmpty(Mono.error(new NotFoundException(String.format(CUSTOMER_NOT_FOUND_TEMPLATE, newCustomer.getId()))))
-                    .flatMap(clientEntity -> {
-                        if (newCustomer.getCustomerType().equals(clientEntity.getCustomerType().toString())) {
-                            return customerRepository.save(customerMapper.partialUpdate(newCustomer, clientEntity))
-                                    .publishOn(Schedulers.boundedElastic())
-                                    .map(customerMapper::toDto);
-                        } else {
-                            return Mono.error(new IllegalArgumentException("El tipo de cliente no debe cambiar."));
-                        }
-                    });
+            throw new IllegalArgumentException("El tipo de cliente no debe cambiar.");
         }
+
     }
 
     @Override
-    public Mono<CustomerDto> getCustomer(String customerId) {
+    @Transactional
+    public CustomerDto getCustomer(Long customerId) {
         return customerRepository.findById(customerId)
-                .switchIfEmpty(Mono.error(new NotFoundException(String.format(CUSTOMER_NOT_FOUND_TEMPLATE, customerId))))
-                .publishOn(Schedulers.boundedElastic())
-                .map(customerMapper::toDto);
+                .map(customerMapper::toDto)
+                .orElseThrow(() -> new NotFoundException(String.format(CUSTOMER_NOT_FOUND_TEMPLATE, customerId)));
     }
 
     @Override
-    public Flux<CustomerDto> listCustomers() {
-        return customerRepository.findAll()
-                .publishOn(Schedulers.boundedElastic())
-                .map(customerMapper::toDto);
+    @Transactional(readOnly = true)
+    public List<CustomerDto> listCustomers() {
+        return customerRepository.findAll().stream()
+                .map(customerMapper::toDto).collect(Collectors.toList());
     }
 
     @Override
-    public Mono<Void> deleteCustomer(String customerId) {
-        return customerRepository.findById(customerId)
-                .switchIfEmpty(Mono.error(new NotFoundException(String.format(CUSTOMER_NOT_FOUND_TEMPLATE, customerId))))
-                .flatMap(clientEntity -> customerRepository.deleteById(clientEntity.getId()));
+    @Transactional
+    public void deleteCustomer(Long customerId) {
+        Customer customer = customerRepository.findById(customerId)
+                        .orElseThrow(() -> new NotFoundException(String.format(CUSTOMER_NOT_FOUND_TEMPLATE, customerId)));
+        customerRepository.delete(customer);
+    }
+
+    @Override
+    public Boolean existsAllByCustomerIds(Set<Long> customerIds) {
+        return customerRepository.existsAllByIdIn(customerIds);
     }
 }

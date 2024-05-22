@@ -1,6 +1,6 @@
 package org.nttdata.credits_service.domain.type;
 
 public enum CreditState {
-    CLOSED,
-    ACTIVE
+    PAID,
+    PENDING_TO_PAY
 }

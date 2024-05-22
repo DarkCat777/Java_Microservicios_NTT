@@ -1,56 +1,51 @@
 package org.nttdata.accounts_service.service;
 
 import org.nttdata.accounts_service.domain.dto.AccountDto;
-import reactor.core.publisher.Flux;
-import reactor.core.publisher.Mono;
+
+import java.util.List;
 
 /**
  * Interface de operaciones del para el servicio de cuentas bancarias (CRUD y lectura de todos los clientes)
+ *
  * @see AccountDto
- * @see Mono
- * @see Flux
  * @author Erick David Carpio Hachiri
  */
 public interface IAccountService {
 
     /**
-     * Obtiene todas las cuentas asociadas a un cliente.
+     * Obtiene todas las cuentas asociadas a un cliente específico.
      *
-     * @param customerId Identificador del cliente.
-     * @return Un Flux que emite todas las cuentas asociadas al cliente.
+     * @param customerId El ID del cliente del cual se desean obtener las cuentas.
+     * @return Una lista de objetos AccountDto que representan las cuentas asociadas al cliente.
      */
-    Flux<AccountDto> getAllAccountsByCustomerId(String customerId);
+    List<AccountDto> getAllAccountsByCustomerId(Long customerId);
 
     /**
      * Crea una nueva cuenta.
      *
-     * @param accountDto Los datos de la cuenta a crear.
-     * @return Un Mono que emite la cuenta creada.
+     * @param accountDto El objeto AccountDto que contiene la información de la nueva cuenta.
+     * @return El objeto AccountDto que representa la cuenta creada.
      */
-    Mono<AccountDto> createAccount(AccountDto accountDto);
+    AccountDto createAccount(AccountDto accountDto);
 
     /**
-     * Obtiene una cuenta por su identificador.
+     * Obtiene una cuenta por su ID.
      *
-     * @param accountId Identificador de la cuenta.
-     * @return Un Mono que emite la cuenta correspondiente al identificador especificado.
+     * @param accountId El ID de la cuenta que se desea obtener.
+     * @return El objeto AccountDto que representa la cuenta encontrada.
      */
-    Mono<AccountDto> getAccountById(String accountId);
+    AccountDto getAccountById(Long accountId);
+
+    AccountDto updateAccountById(Long accountId, AccountDto accountDto);
+
+    AccountDto depositAccountById(Long accountId, Double depositAmount);
+
+    AccountDto withdrawalAccountById(Long accountId, Double withdrawalAmount);
 
     /**
-     * Actualiza los datos de una cuenta existente.
+     * Elimina una cuenta por su ID.
      *
-     * @param accountId Identificador de la cuenta a actualizar.
-     * @param accountDto Los nuevos datos de la cuenta.
-     * @return Un Mono que emite la cuenta actualizada.
+     * @param accountId El ID de la cuenta que se desea eliminar.
      */
-    Mono<AccountDto> updateAccount(String accountId, AccountDto accountDto);
-
-    /**
-     * Elimina una cuenta por su identificador.
-     *
-     * @param accountId Identificador de la cuenta a eliminar.
-     * @return Un Mono que indica la finalización de la operación de eliminación.
-     */
-    Mono<Void> deleteAccountById(String accountId);
+    void deleteAccountById(Long accountId);
 }

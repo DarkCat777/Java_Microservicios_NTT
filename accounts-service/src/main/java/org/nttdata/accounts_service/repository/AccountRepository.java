@@ -1,22 +1,28 @@
 package org.nttdata.accounts_service.repository;
 
 import org.nttdata.accounts_service.domain.entity.Account;
-import org.springframework.data.mongodb.repository.ReactiveMongoRepository;
+import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
-import reactor.core.publisher.Flux;
-import reactor.core.publisher.Mono;
+
+import java.util.List;
 
 @Repository
-public interface AccountRepository extends ReactiveMongoRepository<Account, String> {
+public interface AccountRepository extends JpaRepository<Account, Long> {
 
     /**
      * Encuentra todas las cuentas asociadas a un cliente por su ID de cliente.
      *
-     * @param customerId El ID del cliente del cual se desean obtener las cuentas.
+     * @param ownerId El ID del cliente del cual se desean obtener las cuentas.
      * @return Un Flux que emite todas las cuentas asociadas al cliente especificado.
      */
-    Flux<Account> findAllByOwnerId(String customerId);
+    List<Account> findAllByOwnerId(Long ownerId);
 
-    Mono<Boolean> existsAccountByOwnerId(String customerId);
+    /**
+     * Checks if an account exists for the given owner ID.
+     *
+     * @param ownerId the ID of the owner whose account is to be checked
+     * @return {@code true} if an account exists for the given owner ID, {@code false} otherwise
+     */
+    Boolean existsAccountByOwnerId(Long ownerId);
 }
 

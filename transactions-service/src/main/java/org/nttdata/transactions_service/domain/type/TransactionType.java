@@ -7,11 +7,23 @@ package org.nttdata.transactions_service.domain.type;
  */
 public enum TransactionType {
     /**
-     * Tipo de transacción de depósito "cuando ingresa dinero en algún producto bancario"
+     * Tipo de transacción de depósito, aplica a cuentas bancarias
      */
     DEPOSIT,
     /**
-     * Tipo de transacción de retiro "cuando se retira dinero de algún producto financiero"
+     * Tipo de transacción de retiro, aplica a cuentas bancarias
      */
-    WITHDRAWAL
+    WITHDRAWAL,
+    /**
+     * Tipo de transacción de pago en cuotas, pago de créditos
+     */
+    PAYMENT_IN_INSTALLMENTS,
+    /**
+     * Tipo de transacción pago, aplica a tarjeta de crédito
+     */
+    PAYMENT,
+    /**
+     * Tipo de transacción pago con una tarjeta de crédito
+     */
+    CHARGE
 }

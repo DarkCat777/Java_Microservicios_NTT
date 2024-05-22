@@ -30,7 +30,7 @@ public class ExceptionHandlerControllerAdvice {
      */
     @ExceptionHandler({MethodArgumentNotValidException.class, WebExchangeBindException.class})
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public Mono<ErrorDto> handleMethodArgumentNotValidException(WebExchangeBindException exception) {
+    public ErrorDto handleMethodArgumentNotValidException(WebExchangeBindException exception) {
         log.error(exception.getMessage(), exception);
         Map<String, String> attributeValidationMap = exception.getBindingResult()
                 .getAllErrors()
@@ -43,13 +43,11 @@ public class ExceptionHandlerControllerAdvice {
                         return error.getObjectName();
                     }
                 }, DefaultMessageSourceResolvable::getDefaultMessage));
-        return Mono.just(
-                new ErrorDto(
-                        "400 - Bad request",
-                        exception.getMessage(),
-                        null,
-                        attributeValidationMap
-                ));
+        return new ErrorDto(
+                "400 - Bad request",
+                exception.getMessage(),
+                null,
+                attributeValidationMap);
     }
 
     /**
@@ -60,15 +58,13 @@ public class ExceptionHandlerControllerAdvice {
      */
     @ExceptionHandler(NotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    public Mono<ErrorDto> handleClientNotFoundException(NotFoundException exception) {
+    public ErrorDto handleClientNotFoundException(NotFoundException exception) {
         log.error(exception.getMessage(), exception);
-        return Mono.just(
-                new ErrorDto(
-                        "404 - Not found",
-                        exception.getMessage(),
-                        Arrays.stream(exception.getStackTrace()).map(Objects::toString).collect(Collectors.joining(",")),
-                        null
-                ));
+        return new ErrorDto(
+                "404 - Not found",
+                exception.getMessage(),
+                Arrays.stream(exception.getStackTrace()).map(Objects::toString).collect(Collectors.joining(",")),
+                null);
     }
 
     /**
@@ -79,14 +75,12 @@ public class ExceptionHandlerControllerAdvice {
      */
     @ExceptionHandler(Exception.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    public Mono<ErrorDto> serverExceptionHandler(Exception exception) {
+    public ErrorDto serverExceptionHandler(Exception exception) {
         log.error(exception.getMessage(), exception);
-        return Mono.just(
-                new ErrorDto(
-                        "500 - Internal server error.",
-                        exception.getMessage(),
-                        Arrays.stream(exception.getStackTrace()).map(Objects::toString).collect(Collectors.joining(",")),
-                        null
-                ));
+        return new ErrorDto(
+                "500 - Internal server error.",
+                exception.getMessage(),
+                Arrays.stream(exception.getStackTrace()).map(Objects::toString).collect(Collectors.joining(",")),
+                null);
     }
 }

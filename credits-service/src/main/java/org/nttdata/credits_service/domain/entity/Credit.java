@@ -4,13 +4,11 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.nttdata.credits_service.domain.type.CreditState;
-import org.nttdata.credits_service.domain.type.CreditType;
 import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.Document;
 
+import javax.persistence.*;
 import java.time.OffsetDateTime;
-import java.util.Set;
+import java.util.Date;
 
 /**
  * Producto bancario de tipo crédito
@@ -20,25 +18,20 @@ import java.util.Set;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Document("credits")
+@Entity
 public class Credit {
     /**
      * Identificador único
      */
     @Id
-    private String id;
-    /**
-     * Tipo de crédito
-     * - CRÉDITO
-     * - TARJETA DE CRÉDITO
-     */
-    private CreditType creditType;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
     /**
      * Id del cliente propietario
      */
-    private String ownerId;
+    private Long ownerId;
     /**
-     * Total disponible de créditos
+     * Cantidad a pagar de crédito
      */
     private Double balance;
     /**
@@ -48,29 +41,22 @@ public class Credit {
     /**
      * Porcentaje de interés
      * - Cuando es CRÉDITO - Aplicado sobre el monto total
-     * - Cuando es TARJETA DE CRÉDITO - Aplicado sobre el saldo pendiente
      */
     private Double interestRate;
     /**
      * Fecha de creación e inicio del crédito
      */
     @CreatedDate
-    private OffsetDateTime startDate;
+    private Date startDate;
     /**
      * Fecha de vencimiento del crédito
-     * - Cuando es CRÉDITO - No actualizable
-     * - Cuando es TARJETA DE CRÉDITO - Actualizable
      */
-    private OffsetDateTime dueDate;
-    /**
-     * Identificadores de los pagos realizados
-     */
-    private Set<String> paymentIds;
+    private Date dueDate;
     /**
      * Estado del producto crediticio
-     * - Cerrado - TARJETA DE CRÉDITO
-     * - Cancelado - CRÉDITO
-     * - Activo - CRÉDITO & TARJETA DE CRÉDITO
+     * - PAID -> Pagado
+     * - PENDING_TO_PAY -> Pendiente a pago
      */
+    @Enumerated(EnumType.STRING)
     private CreditState creditState;
 }

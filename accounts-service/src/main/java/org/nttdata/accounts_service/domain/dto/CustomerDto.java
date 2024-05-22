@@ -14,7 +14,7 @@ import java.io.Serializable;
 @AllArgsConstructor
 @NoArgsConstructor
 public class CustomerDto implements Serializable {
-    private String id;
+    private Long id;
     @NotBlank
     private String surnames;
     @NotBlank

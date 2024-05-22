@@ -1,48 +1,55 @@
 package org.nttdata.credits_service.service;
 
 import org.nttdata.credits_service.domain.dto.CreditDto;
-import reactor.core.publisher.Flux;
-import reactor.core.publisher.Mono;
 
+import java.util.List;
+
+/**
+ * Interfaz para el servicio de créditos que define las operaciones relacionadas con créditos.
+ *
+ * @author Erick David Carpio Hachiri
+ */
 public interface ICreditService {
 
     /**
-     * Obtiene todos los créditos.
+     * Lista todos los créditos asociados con el ID del propietario especificado.
      *
-     * @return Un Flux que emite todos los DTO de créditos.
+     * @param ownerId el ID del propietario cuyos créditos se desean listar
+     * @return una lista de objetos CreditDto que representan los créditos del propietario
      */
-    Flux<CreditDto> listCreditsByOwnerId(String ownerId);
+    List<CreditDto> listCreditsByOwnerId(Long ownerId);
 
     /**
      * Crea un nuevo crédito.
      *
-     * @param creditDto La información del crédito a crear.
-     * @return Un Mono que emite el DTO del crédito creado.
+     * @param creditDto el objeto CreditDto que contiene los detalles del crédito a crear
+     * @return el objeto CreditDto que representa el crédito creado
      */
-    Mono<CreditDto> createCredit(CreditDto creditDto);
+    CreditDto createCredit(CreditDto creditDto);
 
     /**
-     * Obtiene un crédito por su ID.
+     * Obtiene los detalles de un crédito específico por su ID.
      *
-     * @param creditId El ID del crédito a obtener.
-     * @return Un Mono que emite el DTO del crédito encontrado.
+     * @param creditId el ID del crédito que se desea obtener
+     * @return el objeto CreditDto que representa el crédito solicitado
      */
-    Mono<CreditDto> getCreditById(String creditId);
+    CreditDto getCreditById(Long creditId);
 
     /**
-     * Actualiza un crédito por su ID.
+     * Actualiza los detalles de un crédito específico por su ID.
      *
-     * @param creditId  El ID del crédito a actualizar.
-     * @param creditDto La información actualizada del crédito.
-     * @return Un Mono que emite el DTO del crédito actualizado.
+     * @param creditId el ID del crédito que se desea actualizar
+     * @param creditDto el objeto CreditDto que contiene los nuevos detalles del crédito
+     * @return el objeto CreditDto que representa el crédito actualizado
      */
-    Mono<CreditDto> updateCreditById(String creditId, CreditDto creditDto);
+    CreditDto updateCreditById(Long creditId, CreditDto creditDto);
 
     /**
-     * Elimina un crédito por su ID.
+     * Elimina un crédito específico por su ID.
      *
-     * @param creditId El ID del crédito a eliminar.
-     * @return Un Mono que indica la finalización de la operación de eliminación.
+     * @param creditId el ID del crédito que se desea eliminar
      */
-    Mono<Void> deleteCreditById(String creditId);
+    void deleteCreditById(Long creditId);
+
+    CreditDto paymentCredit(Long creditId, Double creditDto);
 }

@@ -1,19 +1,25 @@
 server:
   port: 0
 
-mongodb:
-  database: accounts
-  username: mongo-ntt
-  password: mongo-ntt-password
 
 spring:
   application:
     name: accounts-service
-  data:
-    mongodb:
-      uri: mongodb+srv://${mongodb.username}:${mongodb.password}@nttjavabootcamp.co3ynbb.mongodb.net/NttJavaBootcamp?retryWrites=true&w=majority&appName=NttJavaBootcamp
+  datasource:
+    url: jdbc:h2:file:./database/accounts-service-db
+    driverClassName: org.h2.Driver
+    username: accounts-service
+    password: accounts-service-password
+  jpa:
+    hibernate:
+      ddl-auto: create
+    show-sql: true
+
 springdoc:
-  show-actuator: false
+  swagger-ui:
+    show-extensions: true
+    show-common-extensions: true
+  use-fqn: true
 
 #Eureka client
 eureka:

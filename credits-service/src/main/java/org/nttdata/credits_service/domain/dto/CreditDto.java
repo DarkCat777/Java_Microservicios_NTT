@@ -1,18 +1,15 @@
 package org.nttdata.credits_service.domain.dto;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.nttdata.credits_service.domain.type.CreditState;
-import org.nttdata.credits_service.domain.type.CreditType;
 
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Positive;
 import javax.validation.constraints.PositiveOrZero;
 import java.io.Serializable;
-import java.time.OffsetDateTime;
-import java.util.Set;
+import java.util.Date;
 
 /**
  * DTO for {@link org.nttdata.credits_service.domain.entity.Credit}
@@ -22,21 +19,18 @@ import java.util.Set;
 @NoArgsConstructor
 public class CreditDto implements Serializable {
     private String id;
-    @NotBlank
-    private String creditType;
-    @NotEmpty
-    private String ownerId;
-    @PositiveOrZero
+    @Positive
+    private Long ownerId;
+    @Positive
     private Double balance;
     @PositiveOrZero
     private Double outstandingBalance;
     @PositiveOrZero
     private Double interestRate;
-    @NotNull
-    private OffsetDateTime startDate;
-    @NotNull
-    private OffsetDateTime dueDate;
-    private Set<String> paymentIds;
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+    private Date startDate;
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+    private Date dueDate;
     @NotBlank
     private String creditState;
 }

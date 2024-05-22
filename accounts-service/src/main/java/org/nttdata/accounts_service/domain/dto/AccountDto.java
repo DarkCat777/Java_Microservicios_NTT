@@ -3,29 +3,31 @@ package org.nttdata.accounts_service.domain.dto;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.nttdata.accounts_service.domain.entity.Account;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.PositiveOrZero;
 import java.io.Serializable;
-import java.time.OffsetDateTime;
+import java.time.LocalDate;
 import java.util.Set;
 
 /**
- * DTO for {@link org.nttdata.accounts_service.domain.entity.Account}
+ * DTO for {@link Account}
  */
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 public class AccountDto implements Serializable {
-    private String id;
-    @NotBlank
-    private String ownerId;
+    private Long id;
+    @NotNull
+    private Long ownerId;
     @PositiveOrZero
     private Double balance;
     @NotBlank
     private String accountType;
-    private OffsetDateTime createdDate;
-    private OffsetDateTime lastModifiedDate;
-    private Set<String> holderIds;
-    private Set<String> authorizedSignatoryIds;
+    private LocalDate createdDate;
+    private LocalDate lastModifiedDate;
+    private Set<Long> holderIds;
+    private Set<Long> authorizedSignatoryIds;
 }
