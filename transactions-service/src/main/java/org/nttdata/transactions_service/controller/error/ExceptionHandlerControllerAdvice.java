@@ -25,24 +25,39 @@ public class ExceptionHandlerControllerAdvice {
     /**
      * Captura los errores relacionados a las validaciones de datos en los DTO o métodos
      *
-     * @param exception ambos tipos de excepción tiene la función getBindingResult()
-     * @return una instancia reactiva con el detalle del error
+     * @param exception Excepción lanzada por validaciones de argumentos no válidos
+     * @return una instancia con el detalle del error
      */
     @ExceptionHandler({MethodArgumentNotValidException.class, WebExchangeBindException.class})
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ErrorDto handleMethodArgumentNotValidException(MethodArgumentNotValidException exception) {
+    public ErrorDto handleMethodArgumentNotValidException(Exception exception) {
         log.error(exception.getMessage(), exception);
-        Map<String, String> attributeValidationMap = exception.getBindingResult()
-                .getAllErrors()
-                .stream()
-                .filter(error -> error.getDefaultMessage() != null)
-                .collect(Collectors.toMap(error -> {
-                    try {
-                        return ((FieldError) error).getField();
-                    } catch (ClassCastException ex) {
-                        return error.getObjectName();
-                    }
-                }, DefaultMessageSourceResolvable::getDefaultMessage));
+        Map<String, String> attributeValidationMap = null;
+        if (exception instanceof MethodArgumentNotValidException) {
+            attributeValidationMap = ((MethodArgumentNotValidException) exception).getBindingResult()
+                    .getAllErrors()
+                    .stream()
+                    .filter(error -> error.getDefaultMessage() != null)
+                    .collect(Collectors.toMap(error -> {
+                        try {
+                            return ((FieldError) error).getField();
+                        } catch (ClassCastException ex) {
+                            return error.getObjectName();
+                        }
+                    }, DefaultMessageSourceResolvable::getDefaultMessage));
+        } else if (exception instanceof WebExchangeBindException) {
+            attributeValidationMap = ((WebExchangeBindException) exception).getBindingResult()
+                    .getAllErrors()
+                    .stream()
+                    .filter(error -> error.getDefaultMessage() != null)
+                    .collect(Collectors.toMap(error -> {
+                        try {
+                            return ((FieldError) error).getField();
+                        } catch (ClassCastException ex) {
+                            return error.getObjectName();
+                        }
+                    }, DefaultMessageSourceResolvable::getDefaultMessage));
+        }
         return new ErrorDto(
                 "400 - Bad request",
                 exception.getMessage(),
@@ -52,10 +67,10 @@ public class ExceptionHandlerControllerAdvice {
     }
 
     /**
-     * Captura los errores cuando no se encuentra el cliente.
+     * Captura los errores de validación de lógica de negocio.
      *
-     * @param exception Excepción lanzada cuando no se encuentra un cliente.
-     * @return una instancia reactiva con el detalle del error
+     * @param exception Excepción lanzada por validaciones de lógica de negocio
+     * @return una instancia con el detalle del error
      */
     @ExceptionHandler(BusinessLogicValidationException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
@@ -70,14 +85,14 @@ public class ExceptionHandlerControllerAdvice {
     }
 
     /**
-     * Captura los errores cuando no se encuentra el cliente.
+     * Captura los errores cuando no se encuentra el recurso.
      *
-     * @param exception Excepción lanzada cuando no se encuentra un cliente.
-     * @return una instancia reactiva con el detalle del error
+     * @param exception Excepción lanzada cuando no se encuentra un recurso
+     * @return una instancia con el detalle del error
      */
     @ExceptionHandler(NotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    public ErrorDto handleAccountNotFoundException(NotFoundException exception) {
+    public ErrorDto handleNotFoundException(NotFoundException exception) {
         log.error(exception.getMessage(), exception);
         return new ErrorDto(
                 "404 - Not found",
@@ -90,15 +105,15 @@ public class ExceptionHandlerControllerAdvice {
     /**
      * Captura cualquier error en ejecución no catalogado.
      *
-     * @param exception Excepción en ejecución lanzada.
-     * @return una instancia reactiva con el detalle del error
+     * @param exception Excepción en ejecución lanzada
+     * @return una instancia con el detalle del error
      */
     @ExceptionHandler(Exception.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public ErrorDto serverExceptionHandler(Exception exception) {
         log.error(exception.getMessage(), exception);
         return new ErrorDto(
-                "500 - Internal server error.",
+                "500 - Internal server error",
                 exception.getMessage(),
                 Arrays.stream(exception.getStackTrace()).map(Objects::toString).collect(Collectors.joining(",")),
                 null

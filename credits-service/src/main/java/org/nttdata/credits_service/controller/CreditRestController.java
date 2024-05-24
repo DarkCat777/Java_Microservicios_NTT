@@ -37,7 +37,7 @@ public class CreditRestController {
     @ResponseStatus(HttpStatus.OK)
     public CreditDto paymentCredit(
             @Positive @PathVariable Long creditId,
-            @Validated @RequestBody Double amount
+            @Positive @RequestBody Double amount
     ) {
         log.info("Payment credit {}", amount);
         return creditService.paymentCredit(creditId, amount);

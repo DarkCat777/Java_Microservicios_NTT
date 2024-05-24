@@ -19,8 +19,8 @@ public class TransactionRestController {
     private final ITransactionService transactionService;
 
     @PostMapping("/create")
-    @ResponseStatus(HttpStatus.OK)
-    public TransactionDto createTransaction(@Validated TransactionDto transactionDto) {
+    @ResponseStatus(HttpStatus.CREATED)
+    public TransactionDto createTransaction(@Validated @RequestBody TransactionDto transactionDto) {
         return transactionService.createTransaction(transactionDto);
     }
 

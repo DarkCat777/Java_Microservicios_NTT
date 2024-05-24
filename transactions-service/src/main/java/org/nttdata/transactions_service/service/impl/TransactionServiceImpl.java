@@ -20,7 +20,7 @@ import static org.nttdata.transactions_service.domain.exception.NotFoundExceptio
 
 @Service
 @RequiredArgsConstructor
-public class ITransactionServiceImpl implements ITransactionService {
+public class TransactionServiceImpl implements ITransactionService {
 
     /**
      * Referencia a {@link ITransactionMapper}

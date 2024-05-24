@@ -50,6 +50,8 @@ public interface ICreditMapper {
      */
     @Named(value = "enumToString")
     default String map(CreditState creditState) {
+        if (creditState == null)
+            return null;
         return creditState.name();
     }
 
@@ -61,6 +63,8 @@ public interface ICreditMapper {
      */
     @Named(value = "stringToEnum")
     default CreditState map(String name) {
+        if (name == null)
+            return null;
         return CreditState.valueOf(name);
     }
 

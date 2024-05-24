@@ -19,7 +19,7 @@ import java.time.OffsetDateTime;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class TransactionDto implements Serializable {
+public class  TransactionDto implements Serializable {
     private Long id;
     @Positive
     private Double amount;

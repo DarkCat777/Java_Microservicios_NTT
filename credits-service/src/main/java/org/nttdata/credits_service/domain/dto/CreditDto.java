@@ -18,7 +18,7 @@ import java.util.Date;
 @AllArgsConstructor
 @NoArgsConstructor
 public class CreditDto implements Serializable {
-    private String id;
+    private Long id;
     @Positive
     private Long ownerId;
     @Positive
@@ -31,6 +31,5 @@ public class CreditDto implements Serializable {
     private Date startDate;
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private Date dueDate;
-    @NotBlank
     private String creditState;
 }
