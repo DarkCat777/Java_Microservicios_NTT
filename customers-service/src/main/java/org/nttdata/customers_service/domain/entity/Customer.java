@@ -7,7 +7,7 @@ import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
-import java.time.LocalDate;
+import java.util.Date;
 
 /**
  * Definición de la entidad cliente
@@ -49,11 +49,13 @@ public class Customer {
      * Fecha y hora de creación de la entidad, establecida automáticamente
      */
     @CreatedDate
-    private LocalDate createdDate;
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date createdDate;
 
     /**
      * Fecha y hora de la última modificación de la entidad, establecida automáticamente
      */
     @LastModifiedDate
-    private LocalDate lastModifiedDate;
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date lastModifiedDate;
 }

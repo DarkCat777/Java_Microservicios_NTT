@@ -51,30 +51,36 @@ public class AccountServiceImpl implements IAccountService {
     private final IAccountTypeService accountTypeService;
 
     private Map<String, String> isValidCreateAccountOperation(CustomerDto customerDto, AccountDto accountDto) {
+        Map<String, String> validations = new HashMap<>();
         switch (CustomerType.valueOf(customerDto.getCustomerType())) {
             case PERSONAL:
-                Map<String, String> validations = new HashMap<>();
                 if (Boolean.TRUE.equals(accountRepository.existsAccountByOwnerId(customerDto.getId()))) {
                     validations.put("Quantity of accounts", "You have more than one account (savings, current, fixed term) to be a personal client.");
-                } else if (accountDto.getAuthorizedSignatoryIds() != null && !accountDto.getAuthorizedSignatoryIds().isEmpty()) {
-                    validations.put("Authorized Signatory invalid", "Only enterprise customers can have authorized signatures.");
-                } else if (accountDto.getHolderIds() != null && !accountDto.getHolderIds().isEmpty()) {
-                    validations.put("Authorized Signatory invalid", "Only enterprise customers can have multiple holders.");
                 }
-                return validations;
+                if (accountDto.getAuthorizedSignatoryIds() != null && !accountDto.getAuthorizedSignatoryIds().isEmpty()) {
+                    validations.put("Authorized Signatory invalid", "Only enterprise customers can have authorized signatures.");
+                }
+                if (accountDto.getHolderIds() != null && !accountDto.getHolderIds().isEmpty()) {
+                    validations.put("Holder Id invalid", "Only enterprise customers can have multiple holders.");
+                }
+                break;
             case BUSINESS:
                 switch (AccountTypeEnum.valueOf(accountDto.getAccountType())) {
                     case CURRENT:
-                        return Map.of();
+                        break;
                     case SAVINGS:
                     case FIXED_TERM:
-                        return Map.of("Invalid account type", "As a business customer you can only create checking accounts.");
+                        validations.put("Invalid account type", "As a business customer you can only create checking accounts.");
+                        break;
                     default:
-                        return Map.of("Invalid customer type", "You can only create checking accounts with a business customer.");
+                        validations.put("Invalid customer type", "You can only create checking accounts with a business customer.");
+                        break;
                 }
+                break;
             default:
-                return Map.of("Invalid customer type", "You can only create one personal or business account.");
+                validations.put("Invalid customer type", "You can only create one personal or business account.");
         }
+        return validations;
     }
 
     @Override

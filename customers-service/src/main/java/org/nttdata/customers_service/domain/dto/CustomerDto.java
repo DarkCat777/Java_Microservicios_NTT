@@ -8,7 +8,7 @@ import org.nttdata.customers_service.domain.entity.Customer;
 
 import javax.validation.constraints.NotBlank;
 import java.io.Serializable;
-import java.time.LocalDate;
+import java.util.Date;
 
 /**
  * DTO for {@link Customer}
@@ -25,7 +25,7 @@ public class CustomerDto implements Serializable {
     @NotBlank
     private String customerType;
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
-    private LocalDate createdDate;
+    private Date createdDate;
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
-    private LocalDate lastModifiedDate;
+    private Date lastModifiedDate;
 }

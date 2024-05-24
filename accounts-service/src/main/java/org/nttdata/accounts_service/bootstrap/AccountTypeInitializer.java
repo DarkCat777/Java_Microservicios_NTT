@@ -24,7 +24,7 @@ public class AccountTypeInitializer implements CommandLineRunner {
                 null,
                 AccountTypeEnum.CURRENT,
                 1.0,
-                0
+                Integer.MAX_VALUE
         ));
         accountTypes.add(new AccountType(
                 null,

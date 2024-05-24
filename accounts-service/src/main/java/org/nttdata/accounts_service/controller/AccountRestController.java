@@ -9,6 +9,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.constraints.Positive;
+import java.util.List;
 
 /**
  * Controlador REST para la gestión de productos de cuenta.
@@ -24,6 +25,21 @@ import javax.validation.constraints.Positive;
 public class AccountRestController {
 
     private final IAccountService accountService;
+
+    /**
+     * Obtiene las cuentas por el ID del propietario.
+     *
+     * @param ownerId el ID del propietario
+     * @return la cuenta con el ID especificado
+     */
+    @GetMapping("/by-owner-id/{ownerId}")
+    @ResponseStatus(HttpStatus.OK)
+    public List<AccountDto> listAccountsByOwnerId(
+            @PathVariable @Positive Long ownerId
+    ) {
+        log.info(String.format("GET - ACCOUNT BY OWNER ID: %s", ownerId));
+        return accountService.getAllAccountsByCustomerId(ownerId);
+    }
 
     /**
      * Obtiene una cuenta por su ID.
